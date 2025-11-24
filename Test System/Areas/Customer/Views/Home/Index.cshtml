@@ -1,0 +1,192 @@
+﻿@using Test_System.Models
+@model List<Product>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Shop in style</h1>
+            <p class="lead fw-normal text-white-50 mb-0">With this shop hompeage template</p>
+        </div>
+    </div>
+</header>
+<div class="container filter-bar py-4">
+
+    <form class="row g-3 justify-content-center align-items-center mx-auto" style="max-width:1100px;">
+
+        <!-- Product Name -->
+        <div class="col-sm-6 col-md-4 col-lg-2">
+            <input type="text" class="form-control form-control-lg" placeholder="Product Name" name="name">
+        </div>
+
+        <!-- Min Price -->
+        <div class="col-6 col-md-2 col-lg-1">
+            <input type="text" class="form-control form-control-lg" placeholder="Min Price" name="minprice">
+        </div>
+
+        <!-- Max Price -->
+        <div class="col-6 col-md-2 col-lg-1">
+            <input type="text" class="form-control form-control-lg" placeholder="Max Price" name="maxprice">
+        </div>
+
+        <!-- Category -->
+        <div class="col-sm-6 col-md-4 col-lg-2">
+            <select name="categotyId" class="form-select form-select-lg">
+                <option selected>--Select Category--</option>
+
+                @*  ViewData *@
+
+                @* هنا انا بقولوا حول الفيوداتا دي للستا من الكاتيجوري  *@
+
+                @* @foreach (var item in ViewData["categories"] as IEnumerable<Category>)
+                {
+                    <option value="">@item.name</option>
+                } *@
+
+                @* حل تاني افضل  *@
+
+                @* انا لما اعمل كدا علشان اما متاكد ان لستت الكاتيجوري مش فاضيه ومش هيبقي الفيوداتا ب نل *@
+
+                @* @if (ViewData["categories"] is IEnumerable<Category> categories)
+                {
+                    foreach (var item in categories)
+                    {
+                        <option value="">@item.name</option>
+                    }
+                } *@
+
+                @* او ممكن استخدم الفيوباج وخلاص *@
+
+                @*  VieBag *@
+
+                @foreach (var item in ViewBag.categories)
+                {
+                    <option value="@item.id">@item.name</option>
+                }
+            </select>
+        </div>
+
+        <!-- Brand -->
+        <div class="col-sm-6 col-md-4 col-lg-2">
+            <select name="brandId" class="form-select form-select-lg">
+                <option selected>--Select Brand--</option>
+
+                @*  ViewData *@
+
+                @* هنا انا بقولوا حول الفيوداتا دي للستا من الكاتيجوري  *@
+
+                @* @foreach (var item in ViewData["categories"] as IEnumerable<Category>)
+                {
+                    <option value="">@item.name</option>
+                } *@
+
+                @* حل تاني افضل  *@
+
+                @* انا لما اعمل كدا علشان اما متاكد ان لستت الكاتيجوري مش فاضيه ومش هيبقي الفيوداتا ب نل *@
+
+                @* @if (ViewData["categories"] is IEnumerable<Brand> brands)
+                {
+                    foreach (var item in brands)
+                    {
+                        <option value="">@item.name</option>
+                    }
+                } *@
+
+                @* او ممكن استخدم الفيوباج وخلاص *@
+
+                @*  VieBag *@
+
+                @foreach (var item in ViewBag.Brands)
+                {
+                    <option value="@item.id">@item.name</option>
+                }
+            </select>
+        </div>
+
+        <!-- Hot Checkbox -->
+        <div class="col-auto d-flex align-items-center">
+            <div class="form-check mb-0">
+                <input class="form-check-input" type="checkbox" id="hotCheck" value="true">
+                <label class="form-check-label" for="hotCheck"> Hot </label>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="col-12 mt-3 d-grid">
+            <button type="submit" class="btn btn-outline-dark btn-sm">Filter</button>
+        </div>
+
+
+    </form>
+</div>
+
+
+<!-- Section-->
+<div class="container">
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 mt-5">
+            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+
+
+                @foreach (var item in Model)
+                {
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Sale badge-->
+                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">@item.Category.name</div>
+                            <!-- Product image-->
+                            <img class="card-img-top" src="~/Imeges/png_1.jpg" />
+
+
+
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">@item.Name</h5>
+                                    <!-- Product reviews-->
+                                    <div class="d-flex justify-content-center small text-warning mb-2">
+                                        @for (var i = 0; i < item.Rate; i++)
+                                        {
+                                            <div class="bi-star-fill"></div>
+                                        }
+                                    </div>
+                                    <!-- Product price-->
+
+                                    <div class="text-muted text-decoration-line-through">
+                                        @item.Price.ToString("C")
+                                    </div>
+                                    @((item.Price - (item.Price * item.Discount / 100)).ToString("C"))
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="justify-content-center row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li class="page-item"><a class="page-link" href="?page=@(ViewBag.Currentpages-1)">Previous</a></li>
+                        @for (var i = 1; i <= ViewBag.Totalpages ; i++)
+                        {
+                        <li class="page-item"><a class="page-link" href="?page=@i">@i</a></li>
+                        }
+                        <li class="page-item"><a class="page-link" href="?page=@(ViewBag.Currentpages + 1)">Next</a></li>
+                    </ul>
+                </nav>
+
+
+
+            </div>
+
+        </div>
+    </section>
+</div>

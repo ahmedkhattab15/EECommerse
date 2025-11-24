@@ -1,0 +1,76 @@
+@using Test_System.ViewModel
+@model CategoriesWithBrandVM
+
+<div class="container">
+    <div class="row mb-3 align-items-center my-3">
+        <div class="col-md-6">
+            <h2 class="display-6">Create new Product</h2>
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-12">
+            <form method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input id="name" class="form-control" name="Name" />
+                </div>
+
+
+
+                <div class="mb-3 form-floating">
+                    <textarea id="description"
+                              class="form-control"
+                              placeholder="Leave a Description here"
+                              style="height:100px" name="Description"></textarea>
+                    <label for="description">Your Description Here...</label>
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price</label>
+                    <input id="price" class="form-control" name="Price" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="discount" class="form-label">Discount</label>
+                    <input id="discount" class="form-control" name="Discount" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Quantity</label>
+                    <input id="quantity" class="form-control" name="Quantity" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="categoryID" class="form-label">Category</label>
+                    <select name="Category" id="category" class="form-select">
+                        @foreach (var item in Model.categories)
+                        {
+                            <option value="@item.id" selected>@item.name</option>
+
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="brandID" class="form-label">Brand</label>
+                    <select name="Status" id="status" class="form-select">
+                        @foreach (var item in Model.brands)
+                        {
+                            <option value="@item.id" selected>@item.name</option>
+              
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status</label>
+                    <select name="Status" id="status" class="form-select">
+                        <option value="true" selected>Active</option>
+                        <option value="false">InActive</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>

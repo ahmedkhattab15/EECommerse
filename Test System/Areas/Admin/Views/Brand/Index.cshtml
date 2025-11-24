@@ -1,0 +1,54 @@
+﻿
+<div class="container">
+
+    <div class=" row mb-3 align-items-center my-3">
+        <div class="col-md-6">
+            <h2 class=" display-6">All brands</h2>
+        </div>
+        <div class=" col-md-6 text-md-end text-start mt-2 mt-2 mt-md-0">
+            <a asp-action="Create" class="btn btn-success">Create</a>
+        </div>
+    </div>
+
+
+    <div class="row">
+
+        <div class=" col-12">
+
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Status</th>
+                        
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <th scope="row">@item.id</th>
+                            <td>@item.name</td>
+                            @if (item.Status)
+                            {
+                                <td><span class="badge text-bg-success">Active</span></td>
+                            }
+                            else
+                            {
+                                <td><span class="badge text-bg-warning">InActive</span></td>
+                            }
+                          
+                            <td>
+                                <a asp-area="Admin" asp-controller="Brand" asp-action="Edit" asp-route-id="@item.id" class="btn btn-warning">Edit</a>
+                                <a asp-area="Admin" asp-controller="Brand" asp-action="Delete" asp-route-id="@item.id" class="btn btn-danger btn-delete">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

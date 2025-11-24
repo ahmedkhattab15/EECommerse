@@ -1,0 +1,44 @@
+﻿@model Category
+
+<div class="container">
+    <div class="row mb-3 align-items-center my-3">
+        <div class="col-md-6">
+            <h2 class="display-6">Create new Category</h2>
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-12">
+            <form method="post">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input class="form-control" asp-for="@Model.name" />
+                    <span class="text-bg-danger" asp-validation-for="@Model.name"></span>
+
+                </div>
+
+                <div class="mb-3 form-floating">
+                    <textarea id="description"
+                              class="form-control"
+                              placeholder="Leave a Description here"
+                              style="height:100px" asp-for="@Model.description"></textarea>
+                    <label for="description">Your Description Here...</label>
+                </div>
+                <span class="text-bg-danger" asp-validation-for="@Model.description"></span>
+
+
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status</label>
+                    <select name="Status" id="status" class="form-select">
+                        <option value="true" selected>Active</option>
+                        <option value="false">InActive</option>
+                    </select>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial">
+}

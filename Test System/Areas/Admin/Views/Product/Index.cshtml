@@ -1,0 +1,187 @@
+﻿
+
+@model IEnumerable<Product>
+
+<div class="container filter-bar">
+    <!-- هنا بنحد أقصى للعرض ونعمل auto margin علشان يترُكز -->
+    <form class="row justify-content-center align-items-center g-3 mx-auto" style="max-width:1100px;">
+        <div class="col-sm-6 col-md-4 col-lg-2">
+            <input type="text" class="form-control" placeholder="Product Name" name="name">
+        </div>
+
+        <div class="col-6 col-md-2 col-lg-1">
+            <input type="text" class="form-control" placeholder="Min Price" name="minprice">
+        </div>
+
+        <div class="col-6 col-md-2 col-lg-1">
+            <input type="text" class="form-control" placeholder="Max Price" name="maxprice">
+        </div>
+
+        <div class="col-sm-6 col-md-4 col-lg-2">
+            <select name="categotyId" class="form-select">
+                <option selected>--Select Category--</option>
+
+
+                @*  ViewData *@
+
+                @* هنا انا بقولوا حول الفيوداتا دي للستا من الكاتيجوري  *@
+
+                @* @foreach (var item in ViewData["categories"] as IEnumerable<Category>)
+                {
+                    <option value="">@item.name</option>
+                } *@
+
+
+
+                @* حل تاني افضل  *@
+
+                @* انا لما اعمل كدا علشان اما متاكد ان لستت الكاتيجوري مش فاضيه ومش هيبقي الفيوداتا ب نل *@
+
+                @* @if (ViewData["categories"] is IEnumerable<Category> categories)
+                {
+                    foreach (var item in categories)
+                    {
+                        <option value="">@item.name</option>
+                    }
+                } *@
+
+
+                @* او ممكن استخدم الفيوباج وخلاص *@
+
+                @*  VieBag *@
+
+                @foreach (var item in ViewBag.categories)
+                {
+                    <option value="@item.id">@item.name</option>
+                }
+
+
+
+            </select>
+        </div>
+
+        <div class="col-sm-6 col-md-4 col-lg-2">
+
+            <select name="brandId" class="form-select">
+                <option selected>--Select Brand--</option>
+
+
+                @*  ViewData *@
+
+                @* هنا انا بقولوا حول الفيوداتا دي للستا من الكاتيجوري  *@
+
+                @* @foreach (var item in ViewData["categories"] as IEnumerable<Category>)
+                {
+                    <option value="">@item.name</option>
+                } *@
+
+                @* حل تاني افضل  *@
+
+                @* انا لما اعمل كدا علشان اما متاكد ان لستت الكاتيجوري مش فاضيه ومش هيبقي الفيوداتا ب نل *@
+
+                @* @if (ViewData["categories"] is IEnumerable<Brand> brands)
+                {
+                    foreach (var item in brands)
+                    {
+                        <option value="">@item.name</option>
+                    }
+                } *@
+
+
+                @* او ممكن استخدم الفيوباج وخلاص *@
+
+                @*  VieBag *@
+
+                @foreach (var item in ViewBag.Brands)
+                {
+                    <option value="@item.id">@item.name</option>
+                }
+
+            </select>
+            @* ================================================== *@
+        </div>
+
+        <div class="col-auto d-flex align-items-center">
+            <div class="form-check mb-0">
+                <input class="form-check-input" type="checkbox" id="hotCheck" value="true">
+                <label class="form-check-label" for="hotCheck"> Hot </label>
+            </div>
+        </div>
+
+
+        <div class="col-auto mt-3">
+            <button type="submit" class="btn btn-dark-custom">Filter</button>
+        </div>
+    </form>
+</div>
+<div class="container">
+
+    <div class=" row mb-3 align-items-center my-3">
+        <div class="col-md-6">
+            <h2 class=" display-6">All Products</h2>
+        </div>
+        <div class=" col-md-6 text-md-end text-start mt-2 mt-2 mt-md-0">
+            <a asp-action="Create" class="btn btn-success">Create</a>
+        </div>
+    </div>
+
+
+    <div class="row">
+
+        <div class=" col-12">
+
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Category Name</th>
+                        <th scope="col">Brand Name</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Status</th>
+                        
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <th scope="row">@item.Id</th>
+                            <td>@item.Name</td>
+                            <td>@item.Category.name</td>
+                            <td>@item.Brand.name</td>
+                            <td>@item.Price.ToString("c")</td>
+
+                            @if (item.Quantity > 100)
+                            {
+                                <td><span class="badge text-bg-primary">@item.Quantity</span></td>
+                            }
+                            else
+                            {
+                                <td><span class="badge text-bg-warning">@item.Quantity</span></td>
+                            }
+
+
+                            @if (item.Status)
+                            {
+                                <td><span class="badge text-bg-success">Active</span></td>
+                            }
+                            else
+                            {
+                                <td><span class="badge text-bg-warning">InActive</span></td>
+                            }
+                          
+                            <td>
+                                <a asp-area="Admin" asp-controller="Product" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
+                                <a asp-area="Admin" asp-controller="Product" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-delete">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
