@@ -6,6 +6,8 @@ namespace Test_System.Models
 
     public class ProductSubImage
     {
+        internal string SubImg;
+
         public int ProductID { get; set; }
         public Product product { get; set; } = null!;
         public string img { get; set; } = string.Empty;

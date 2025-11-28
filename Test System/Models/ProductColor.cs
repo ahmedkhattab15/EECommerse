@@ -4,7 +4,7 @@ using System.Drawing;
 namespace Test_System.Models
 {
     [PrimaryKey(nameof(ProductID), nameof(Color))]
-    public class ProductColor
+    public class ProductColor 
     {
         public int ProductID { get; set; }
 

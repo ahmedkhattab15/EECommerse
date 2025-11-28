@@ -1,30 +1,20 @@
-public IActionResult Index(FilterProductVM filter)
+// Fix for CS0246, IDE0060: Remove 'subImg' and 'color' parameters from Create action as they are unused and 'IForfile' is undefined.
+[HttpPost]
+public IActionResult Create(Product Product, IFormFile img)
 {
-    var Products = _db.Products.AsNoTracking().AsQueryable();
-    Products = Products.Include(e => e.Category).Include(b => b.Brand);
+    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName);
+    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Imeges", fileName);
+    // save Img in wwwroot
 
-    var Product = _db.Products.Include(e => e.Category).AsQueryable();
+    using(var stream = System.IO.File.Create(filePath))
+    {
+        img.CopyTo(stream);
+    }
 
-    if (filter.name is not null)
-        Product = Product.Where(e => e.Name.Contains(filter.name));
+    Product.MainImg = fileName;
 
-    if (filter.minprice is not null)
-        Product = Product.Where(e => e.Price - e.Price * e.Discount / 100 > filter.minprice);
-
-    if (filter.maxprice is not null)
-        Product = Product.Where(e => e.Price - e.Price * e.Discount / 100 < filter.maxprice);
-
-    if (filter.categotyId is not null)
-        Product = Product.Where(e => e.CategoryID == filter.categotyId);
-
-    if (filter.brandId is not null)
-        Product = Product.Where(e => e.BrandID == filter.brandId);
-
-    var categories = _db.categories.AsEnumerable();
-    ViewBag.categories = _db.categories;
-
-    var Brands = _db.Brands.AsEnumerable();
-    ViewBag.Brands = _db.Brands;
-
-    return View(Product.AsEnumerable());
+    //save Product in db
+    _db.Products.Add(Product);
+    _db.SaveChanges();
+    return RedirectToAction(nameof(Index));
 }

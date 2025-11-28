@@ -1,22 +1,26 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using System.Threading.Tasks;
 using Test_System.Data_Acssess;
 using Test_System.Models;
+using Test_System.Repositories;
 
 namespace Test_System.Areas.Admin.Controllers
 {
-    [Area ("Admin")]
+    [Area("Admin")]
     public class BrandController : Controller
     {
-        ApplicationDBContext _db = new();
+        CategoryRepository<Brand> _CategoryRepository = new();
+
 
         // Read
-        public IActionResult Index()
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-           var brands =  _db.Brands.AsNoTracking().AsQueryable();     //  عرض الداتا فقط
+            var brands = await _CategoryRepository.GetAsync(tracked: false);     //  عرض الداتا فقط
 
-            return View(brands.Select(e=>new
+            return View(brands.Select(e => new
             {
                 e.id,
                 e.name,
@@ -31,11 +35,11 @@ namespace Test_System.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-           return View();
+            return View();
         }
 
         [HttpPost]
-        public IActionResult Create(Brand Brand , IFormFile img)
+        public async Task<IActionResult> CreateAsync(Brand Brand, IFormFile img, CancellationToken cancellationToken)
         {
             // الصورة بتتحفظ على السيرفر واسمها في قاعدة البيانات
             // save Img in wwwroot
@@ -44,7 +48,7 @@ namespace Test_System.Areas.Admin.Controllers
 
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Imeges", fileName);
 
-            using(var stream = System.IO.File.Create(filePath))
+            using (var stream = System.IO.File.Create(filePath))
             {
                 img.CopyTo(stream);
             }
@@ -59,8 +63,8 @@ namespace Test_System.Areas.Admin.Controllers
             Brand.Img = fileName;
 
             //save Brand in db
-            _db.Brands.Add(Brand);
-            _db.SaveChanges();
+            await _CategoryRepository.AddAsync(Brand, cancellationToken);
+            await _CategoryRepository.commitAsync(cancellationToken);
 
             TempData["Notification"] = "Add Brand Successfully";
 
@@ -69,20 +73,22 @@ namespace Test_System.Areas.Admin.Controllers
         // Edit
 
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
         {
-            var Brand = _db.Brands.FirstOrDefault(e => e.id == id);
+            var Brand = await _CategoryRepository.GetOneAsync(e => e.id == id,
+                CancellationToken: cancellationToken);
             if (Brand is null)
             {
                 return RedirectToAction("NotFoundPadge", "Home");
             }
             return View(Brand);
         }
-
         [HttpPost]
-        public IActionResult Edit(Brand Brand, IFormFile? img)
+        public async Task<IActionResult> EditAsync(Brand Brand, IFormFile? img, CancellationToken cancellationToken)
         {
-            var brandinDB = _db.Brands.FirstOrDefault(e => e.id == Brand.id);
+            var brandinDB = await _CategoryRepository.GetOneAsync(e => e.id == Brand.id,
+                CancellationToken: cancellationToken);
+
 
             if (brandinDB is null)
                 return RedirectToAction("NotFoundPadge", "Home");
@@ -104,26 +110,28 @@ namespace Test_System.Areas.Admin.Controllers
                 brandinDB.Img = brandinDB.Img;
             }
 
-        
+
             brandinDB.name = Brand.name;
             brandinDB.description = Brand.description;
-           
 
-            _db.SaveChanges();
+
+            await _CategoryRepository.commitAsync(cancellationToken);
+
 
             TempData["Notification"] = "Update Brand Successfully";
 
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id, CancellationToken cancellationToken)
         {
-            var Brand = _db.Brands.FirstOrDefault(e => e.id == id);
-            if (Brand is null)
+            var category = await _CategoryRepository.GetOneAsync(e => e.id == id,
+                CancellationToken: cancellationToken);
+            if (category is null)
                 return RedirectToAction("NotFoundPadge", "Home");
 
-            _db.Brands.Remove(Brand);
-            _db.SaveChanges();
+            _CategoryRepository.Delete(category);
+            await _CategoryRepository.commitAsync(cancellationToken);
 
             TempData["Notification"] = "Delete Brand Successfully";
 

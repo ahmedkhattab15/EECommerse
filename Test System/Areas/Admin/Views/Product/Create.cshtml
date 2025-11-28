@@ -38,7 +38,6 @@
                     <label for="quantity" class="form-label">Quantity</label>
                     <input id="quantity" class="form-control" name="Quantity" />
                 </div>
-
                 <div class="mb-3">
                     <label for="categoryID" class="form-label">Category</label>
                     <select name="Category" id="category" class="form-select">
@@ -56,14 +55,14 @@
                         @foreach (var item in Model.brands)
                         {
                             <option value="@item.id" selected>@item.name</option>
-              
+
                         }
                     </select>
                 </div>
 
                 <div class="mb-3">
                     <label for="status" class="form-label">Status</label>
-                    <select name="Status" id="status" class="form-select">
+                    <select name="Status" id="status" class="form-select ">
                         <option value="true" selected>Active</option>
                         <option value="false">InActive</option>
                     </select>

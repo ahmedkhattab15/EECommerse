@@ -1,49 +1,49 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using System.Threading.Tasks;
 using Test_System.Data_Acssess;
 using Test_System.Models;
-
+using Test_System.Repositories;
 namespace Test_System.Areas.Admin.Controllers
 {
-    [Area ("Admin")]
+    [Area("Admin")]
     public class CategoryController : Controller
     {
-        ApplicationDBContext _db = new();
+        CategoryRepository<Category> _CategoryRepository = new();
 
         // 1_ Read
-        public IActionResult Index()
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-           var brands =  _db.categories.AsNoTracking().AsQueryable();     //  عرض الداتا فقط
+            var categories = await _CategoryRepository.GetAsync(
+             includes: [e => e.name], tracked: false, CancellationToken: cancellationToken);
 
-            return View(brands.AsEnumerable());
+            return View(categories.AsEnumerable());
         }
-
-
         // 2_ Create 
-        [HttpGet]   
+        [HttpGet]
         public IActionResult Create()
         {
-           return View(new Category());
+            return View(new Category());
         }
         [HttpPost]
-        public IActionResult Create(Category category)
+        public async Task<IActionResult> Create(Category category, CancellationToken cancellationToken)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(category);
             }
+            await _CategoryRepository.AddAsync(category, cancellationToken);
+            await _CategoryRepository.commitAsync(cancellationToken);
 
-            _db.categories.Add(category);
-            _db.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
-
-
         // 3_ Edit
         [HttpGet]
-         public IActionResult Edit(int id)
+        public async Task<IActionResult> EditAsync(int id, CancellationToken cancellationToken)
         {
-            var category = _db.categories.FirstOrDefault(e => e.id == id);
+            var category = await _CategoryRepository.GetOneAsync(e => e.id == id,
+                CancellationToken: cancellationToken);
             if (category is null)
             {
                 return RedirectToAction("NotFoundPadge", "Home");
@@ -51,27 +51,30 @@ namespace Test_System.Areas.Admin.Controllers
             return View(category);
         }
         [HttpPost]
-        public IActionResult Edit(Category category)
+        public async Task<IActionResult> EditAsync(Category category, CancellationToken cancellationToken)
         {
-            _db.categories.Update(category);
-            _db.SaveChanges();
+            if (!ModelState.IsValid)
+            {
+                return View(category);
+            }
+
+            _CategoryRepository.Update(category);
+            await _CategoryRepository.commitAsync(cancellationToken);
 
             return RedirectToAction(nameof(Index));
         }
-
-
         // 4_ Delete
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id, CancellationToken cancellationToken)
         {
-            var category = _db.categories.FirstOrDefault(e => e.id == id);
+            var category = await _CategoryRepository.GetOneAsync(e => e.id == id,
+                CancellationToken: cancellationToken);
             if (category is null)
                 return RedirectToAction("NotFoundPadge", "Home");
 
-            _db.categories.Remove(category);
-            _db.SaveChanges();
+            _CategoryRepository.Delete(category);
+            await _CategoryRepository.commitAsync(cancellationToken);
 
             return RedirectToAction(nameof(Index));
         }
-
     }
 }
