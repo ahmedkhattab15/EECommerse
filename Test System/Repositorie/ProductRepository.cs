@@ -5,7 +5,7 @@ using Test_System.Repositories;
 namespace Test_System.Repositorie
 {
 
-    public class ProductRepository : CategoryRepository<Product>
+    public class ProductRepository : Repository<Product>
     {
         private ApplicationDBContext _db = new();
 
@@ -14,17 +14,12 @@ namespace Test_System.Repositorie
              await _db.Products.AddRangeAsync(products , cancellationToken);
         }
 
+        internal void commit()
+        {
+            throw new NotImplementedException();
+        }
+
         internal void Delete(IEnumerable<Product> product)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal async Task<IEnumerable<Product>> GetAsync(CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal async Task GetAsync(int id, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

@@ -5,12 +5,12 @@ using Test_System.Data_Acssess;
 using Test_System.Models;
 namespace Test_System.Repositories
 {
-    public class CategoryRepository<T> where T : class
+    public class Repository<T> where T : class
     {
         private ApplicationDBContext _db = new();
         private DbSet<T> _dbSet;
 
-        public CategoryRepository()
+        public Repository()
         {
             _dbSet = _db.Set<T>();
         }
@@ -22,9 +22,10 @@ namespace Test_System.Repositories
         // اتلغي request والمستخدم قفل الصفحة أو الـ
         //  علشان نوقف العملية CancellationToken بنستخدم
 
-        public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
+        public async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
         {
             await _dbSet.AddAsync(entity, cancellationToken);
+            return entity;
         }
         public void Update(T entity)
         {
@@ -82,16 +83,6 @@ namespace Test_System.Repositories
             {
                 Console.WriteLine(ex.Message);
             }
-        }
-
-        internal async Task AddAsync(Brand brand, object cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal async Task<Brand> GetOneAsync(Func<Brand, bool> value, object CancellationToken)
-        {
-            throw new NotImplementedException();
         }
     }
 }

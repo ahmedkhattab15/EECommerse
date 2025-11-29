@@ -12,7 +12,7 @@ namespace Test_System.Areas.Admin.Controllers
     [Area("Admin")]
     public class BrandController : Controller
     {
-        CategoryRepository<Brand> _CategoryRepository = new();
+        Repository<Brand> _CategoryRepository = new();
 
 
         // Read

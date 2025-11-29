@@ -16,14 +16,14 @@ namespace Test_System.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         ProductRepository _productRepository = new();
-        CategoryRepository<Category> _CategoryRepository = new();
-        CategoryRepository<Brand> _BrandRepository = new();
+        Repository<Category> _CategoryRepository = new();
+        Repository<Brand> _BrandRepository = new();
 
         // Read
-        public async Task<IActionResult> Index(FilterProductVM filter, CancellationToken cancellationToken)
+        public async Task<IActionResult> Index(FilterProductVM filter, CancellationToken cancellationToken , int page = 1)
         {
             var Products = await _productRepository.GetAsync(
-                includes: [(e => e.Category), (e => e.Brand)],
+                includes: [e => e.Category, e => e.Brand],
                 tracked: false,
                 cancellationToken: cancellationToken);
 
@@ -52,17 +52,20 @@ namespace Test_System.Areas.Admin.Controllers
 
         // Create 
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(CancellationToken cancellationToken)
         {
+            var categories = await _CategoryRepository.GetAsync(CancellationToken : cancellationToken);
+            var brands = await _BrandRepository.GetAsync(CancellationToken : cancellationToken);
+
             return View(new CategoriesWithBrandVM
             {
-                categories = await _CategoryRepository.GetAsync(),
-                brands = await _BrandRepository.GetAsync()
+                categories = await _CategoryRepository.GetAsync(CancellationToken : cancellationToken),
+                brands = await _BrandRepository.GetAsync(CancellationToken: cancellationToken)
             });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Product Product, IFormFile img)
+        public async Task<IActionResult> Create(Product Product, IFormFile img , CancellationToken  cancellationToken)
         {
             if (img is not null && img.Length > 0)
             {
@@ -74,20 +77,30 @@ namespace Test_System.Areas.Admin.Controllers
 
                 Product.MainImg = fileName;
             }
+            await _productRepository.AddAsync(Product , cancellationToken); 
+            await _productRepository.commitAsync( cancellationToken);
 
-            await _productRepository.AddAsync(Product); 
             return RedirectToAction(nameof(Index));
         }
 
         // Edit
         [HttpGet]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(int id , CancellationToken cancellationToken)
         {
-            var Product = await _productRepository.GetAsync();
+            var Product = await _productRepository.GetOneAsync(CancellationToken: cancellationToken , tracked : false);
             if (Product is null)
                 return RedirectToAction("NotFoundPadge", "Home");
 
-            return View(Product);
+
+            var categories = await _CategoryRepository.GetAsync(CancellationToken: cancellationToken);
+            var brands = await _BrandRepository.GetAsync(CancellationToken: cancellationToken);
+
+            return View ( new
+            {
+                Product = Product,
+                categories = categories.AsEnumerable(),
+                brands = brands.AsEnumerable()
+            });
         }
 
         [HttpPost]
@@ -115,19 +128,21 @@ namespace Test_System.Areas.Admin.Controllers
             {
                 Product.MainImg = ProductinDB.MainImg;
             }
+             _productRepository.Update(Product);
+            await _productRepository.commitAsync(cancellationToken);
 
-             _productRepository.Update(Product); 
             return RedirectToAction(nameof(Index));
         }
 
         // Delete
         public async Task<IActionResult> Delete(int id , CancellationToken cancellationToken)
         {
-            var Product = await _productRepository.GetAsync(cancellationToken);
+            var Product = await _productRepository.GetAsync(CancellationToken : cancellationToken);
             if (Product is null)
                 return RedirectToAction("NotFoundPadge", "Home");
 
              _productRepository.Delete(Product);
+            await _productRepository.commitAsync(cancellationToken);
             return RedirectToAction(nameof(Index));
         }
     }
