@@ -10,7 +10,7 @@ namespace Test_System.Areas.Admin.Controllers
     [Area("Admin")]
     public class CategoryController : Controller
     {
-        Repository<Category> _CategoryRepository = new();
+        Repository<Category> _CategoryRepository = new Repository<Category>();
 
         // 1_ Read
         public async Task<IActionResult> Index(CancellationToken cancellationToken)

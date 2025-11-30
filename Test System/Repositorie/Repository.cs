@@ -3,9 +3,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using Test_System.Data_Acssess;
 using Test_System.Models;
+using Test_System.Repositorie.IRepositorie;
 namespace Test_System.Repositories
 {
-    public class Repository<T> where T : class
+    public class Repository<T> : Repositorie.IRepositorie.IRepository<Product> where T : class
     {
         private ApplicationDBContext _db = new();
         private DbSet<T> _dbSet;
@@ -83,6 +84,31 @@ namespace Test_System.Repositories
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        public Task<Product> AddAsync(Product entity, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Update(Product entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete(Product entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Product>> GetAsync(Expression<Func<Product, bool>>? exception = null, Expression<Func<Product, object>>[]? includes = null, bool tracked = true, CancellationToken cancellationToken = default, CancellationToken CancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Product?> GetOneAsync(Expression<Func<Product, bool>>? exception = null, Expression<Func<Product, object>>[]? includes = null, bool tracked = true, CancellationToken cancellationToken = default, CancellationToken CancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using System.Threading.Tasks;
 using Test_System.Data_Acssess;
 using Test_System.Models;
+using Test_System.Repositorie.IRepositorie;
 using Test_System.Repositories;
+using System.Linq.Expressions;
+
 namespace Test_System.Repositorie
 {
-
-    public class ProductRepository : Repository<Product>
+    public class ProductRepository : Repository<Product>, IRepository<Product>
     {
         private ApplicationDBContext _db = new();
 
