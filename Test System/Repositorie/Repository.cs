@@ -1,21 +1,24 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using Test_System.Data_Acssess;
 using Test_System.Models;
 using Test_System.Repositorie.IRepositorie;
 namespace Test_System.Repositories
 {
-    public class Repository<T> : Repositorie.IRepositorie.IRepository<Product> where T : class
+    public class Repository<T> : IRepository<T> where T : class
+        // where T : class
+        // دي شرط بيقول  
+        // Class  => T لازم يكون 
     {
-        private ApplicationDBContext _db = new();
-        private DbSet<T> _dbSet;
+        ApplicationDBContext _db = new();
+        DbSet<T> _dbSet;
 
         public Repository()
         {
             _dbSet = _db.Set<T>();
         }
-
 
         // CancellationToken ? 
         // توقف تنفيذها لو السيستم طلب كده  Async هو أداة بتخلّي الميثود الـ
@@ -55,6 +58,7 @@ namespace Test_System.Repositories
                     query = query.Include(include);
                 }
             }
+            
 
             if (exception is not null)
             {

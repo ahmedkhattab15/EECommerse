@@ -8,18 +8,18 @@ using Test_System.ViewModel;
 
 namespace Test_System.Area.Customer.Controllers
 {
-     [Area("Customer")]
+    [Area("Customer")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
 
 
-         ApplicationDBContext db = new();
+        ApplicationDBContext db = new();
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
         }
-        public IActionResult Index(FilterProductVM filter , int page = 1)
+        public IActionResult Index(FilterProductVM filter, int page = 1)
         {
             var Product = db.Products.Include(e => e.Category).AsQueryable();
 
@@ -33,8 +33,8 @@ namespace Test_System.Area.Customer.Controllers
             // بيخليك تقدر تعمل فلترة وترتيب واستعلامات مركبة قبل ما تجيب الداتا فعليًا من قاعدة البيانات.
 
             if (filter.name is not null)
-                Product = Product.Where(e => e.Name.Contains(filter.name));   
-          
+                Product = Product.Where(e => e.Name.Contains(filter.name));
+
             if (filter.minprice is not null)
                 Product = Product.Where(e => e.Price - e.Price * e.Discount / 100 > filter.minprice);
 
@@ -42,7 +42,7 @@ namespace Test_System.Area.Customer.Controllers
                 Product = Product.Where(e => e.Price - e.Price * e.Discount / 100 < filter.minprice);
 
             if (filter.name is not null)
-                Product = Product.Where(e => e.Name.Contains(filter.name));      
+                Product = Product.Where(e => e.Name.Contains(filter.name));
 
             if (filter.categotyId is not null)
                 Product = Product.Where(e => e.CategoryID == filter.categotyId);
@@ -50,10 +50,9 @@ namespace Test_System.Area.Customer.Controllers
             if (filter.brandId is not null)
                 Product = Product.Where(e => e.BrandID == filter.brandId);
 
-
             // ViewBag , ViewData
             // ي حاجة هتبعتها من الكنترولر للفيو 
-            // ViewBag الاسهل     
+            // ViewBag الاسهل
             var categories = db.categories.AsEnumerable();
             ViewBag.categories = db.categories;
 
